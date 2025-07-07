@@ -47,16 +47,43 @@ export class Contacts implements OnInit {
   }
 
   addContact(f: NgForm) {
+    this.resetAlerts();
 
+    this.uploadFile();
+
+    this.contactService.add(this.contact).subscribe(
+      (res: Contact) => {
+        this.contacts.push(res);
+        this.success = 'Successfully created';
+
+        f.reset();
+      },
+      (err) =>  (this.error = err.message)
+    );
+  }
+
+  uploadFile(): void {
+    if (!this.selectedFile)
+    {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+
+    this.http.post('http://localhost/contactmanagerangular/contactapi/upload', formData).subscribe(
+      response => console.log('File uploaded successfully:', response),
+      error => console.error('File upload failed:', error)
+    );
   }
 
   onFileSelected(event: Event): void
   {
-      const input = event.target as HTMLInputElement;
-      if(input.files && input.files.length > 0)
-      {
-          this.selectedFile = input.files[0];
-      }
+    const input = event.target as HTMLInputElement;
+    if(input.files && input.files.length > 0)
+    {
+      this.selectedFile = input.files[0];
+    }
   }
 
   resetAlerts(): void {

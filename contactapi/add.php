@@ -1,10 +1,10 @@
 <?php
-    require 'contact.php';
+    require 'connect.php';
 
     // Get the posted data
     $postdata = file_get_contents("php://input");
 
-    if(isset($postdata) && !empty ($postdata))
+    if(isset($postdata) && !empty($postdata))
     {
 
         // Extract the data
@@ -17,7 +17,7 @@
             {
                 return http_response_code(400);
             }
-        
+
         // Sanitize
         $firstName = mysqli_real_escape_string($con, trim($request->data->firstName));
         $lastName = mysqli_real_escape_string($con, trim($request->data->lastName));
@@ -33,7 +33,7 @@
         // Store the data
         $sql = "INSERT INTO `contacts`(`contactID`,`firstName`,`lastName`, `emailAddress`, `phone`, `status`, `dob`, `imageName`) VALUES (null,'{$firstName}','{$lastName}','{$emailAddress}','{$phone}','{$status}','{$dob}', '{$new}')";
 
-        if(mysqliquery($con, $sql))
+        if(mysqli_query($con, $sql))
         {
             http_response_code(201);
 
@@ -54,7 +54,7 @@
         {
             http_response_code(422);
         }
+
     }
-
-
+    
 ?>
