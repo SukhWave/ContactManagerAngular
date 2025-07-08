@@ -3,10 +3,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { map } from 'rxjs/operators';
 
-import { Contact} from './contact';
+import { Contact } from './contact';
 
 @Injectable({
-      providedIn: 'root',
+    providedIn: 'root',
 })
 
 export class ContactService {
@@ -44,4 +44,3 @@ export class ContactService {
         return this.http.delete(`${this.baseUrl}/delete`, {params: params});
     }
 }
-
