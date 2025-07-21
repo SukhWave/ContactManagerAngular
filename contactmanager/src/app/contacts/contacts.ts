@@ -48,21 +48,28 @@ export class Contacts implements OnInit {
   }
 
   addContact(f: NgForm) {
-    this.resetAlerts();
+  this.resetAlerts();
 
+  if (this.selectedFile) {
+    this.contact.imageName = this.selectedFile.name;
     this.uploadFile();
     this.cdr.detectChanges();
-
-    this.contactService.add(this.contact).subscribe(
-      (res: Contact) => {
-        this.contacts.push(res);
-        this.success = 'Successfully created';
-
-        f.reset();
-      },
-      (err) =>  (this.error = err.message)
-    );
+  } else {
+    this.contact.imageName = ''; // Let backend handle default placeholder
   }
+
+  this.contactService.add(this.contact).subscribe(
+    (res: Contact) => {
+      this.contacts.push(res);
+      this.success = 'Successfully created';
+      f.reset();
+      this.selectedFile = null; // Clear file selection
+    },
+    (err) => (this.error = err.message)
+  );
+  this.cdr.detectChanges();
+}
+
 
   editContact(firstName: any, lastName: any, emailAddress: any, phone: any, contactID: any)
   {
@@ -87,21 +94,21 @@ export class Contacts implements OnInit {
       );
   }
 
-deleteContact(contactID: number): void {
-  const confirmed = window.confirm("Are you sure you want to delete this contact?");
-  if (!confirmed) return;
+  deleteContact(contactID: number): void {
+    const confirmed = window.confirm("Are you sure you want to delete this contact?");
+    if (!confirmed) return;
 
-  this.resetAlerts();
+    this.resetAlerts();
 
-  this.contactService.delete(contactID).subscribe({
-    next: () => {
-      this.contacts = this.contacts.filter(item => item.contactID && +item.contactID !== +contactID);
-      this.success = "Deleted successfully";
-      this.cdr.detectChanges();
-    },
-    error: err => this.error = err.message
-  });
-}
+    this.contactService.delete(contactID).subscribe({
+      next: () => {
+        this.contacts = this.contacts.filter(item => item.contactID && +item.contactID !== +contactID);
+        this.success = "Deleted successfully";
+        this.cdr.detectChanges(); // <--- force UI update
+      },
+      error: err => this.error = err.message
+    });
+  }
 
 
   uploadFile(): void {
@@ -117,6 +124,7 @@ deleteContact(contactID: number): void {
       response => console.log('File uploaded successfully:', response),
       error => console.error('File upload failed:', error)
     );
+
   }
 
   onFileSelected(event: Event): void
