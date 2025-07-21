@@ -51,6 +51,7 @@ export class Contacts implements OnInit {
     this.resetAlerts();
 
     this.uploadFile();
+    this.cdr.detectChanges();
 
     this.contactService.add(this.contact).subscribe(
       (res: Contact) => {
