@@ -1,4 +1,4 @@
-<!--div id="theForm">
+<!--<div id="theForm">
   <h2>Contact Form</h2>
   <form #f="ngForm" name="contactForm" (submit)="addContact(f)">
     
@@ -106,11 +106,14 @@
     </button>
 
   </form>
-</div-->
+</div>-->
 
 
 <div id="theList" class="contact-list-container">
-  <h2>Contact List</h2>    
+  <div class="toolbar">
+    <h2>{{ userName }}'s Contact List</h2>
+    <button (click)="authService.logout()" class="btn btn-sm btn-danger">Logout</button>
+  </div>    
 
   <div *ngFor="let item of contacts; let i = index;" class="contact-card row align-items-center">
     <div class="col-2 contact-field">{{ item.firstName }}</div>
@@ -124,11 +127,10 @@
       <button class="btn btn-success btn-sm" [routerLink]="['/edit', item.contactID]">Edit</button>
       <button class="btn btn-danger btn-sm" (click)="deleteContact(item.contactID ?? 0)">Delete</button>
     </div>
+  </div>
 </div>
 
 <div id="links" class="mt-4 text-center">
   <button class="btn btn-sm btn-primary me-2" routerLink="/add">Add Contact</button>
   <button class="btn btn-sm btn-primary" routerLink="/about">About Us</button>
 </div>
-</div>
-

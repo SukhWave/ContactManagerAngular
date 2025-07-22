@@ -1,5 +1,8 @@
 <div class="container">
-  <h2>Add Contact</h2>
+  <div class="toolbar">
+    <h2>{{ userName }}'s Add Contact</h2>
+    <button (click)="authService.logout()" class="btn btn-sm btn-danger">Logout</button>
+  </div>
   <form #f="ngForm" (ngSubmit)="addContact(f)">
     
     <div class="form-group">
@@ -15,7 +18,6 @@
     <div class="form-group">
       <label>Email Address</label>
       <input type="email" name="emailAddress" [(ngModel)]="contact.emailAddress" class="form-control" required email />
-
     </div>
 
     <div class="form-group">
@@ -55,6 +57,7 @@
 
     <div *ngIf="success" class="alert alert-success mt-3">{{ success }}</div>
     <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+    
   </form>
 </div>
 
@@ -63,6 +66,3 @@
     Back to Contact Manager
   </button>
 </div>
-
-
-

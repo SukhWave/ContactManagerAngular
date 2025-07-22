@@ -5,6 +5,7 @@ import { NgForm, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Contact } from '../contact';
 import { ContactService } from '../contact.service';
+import { Auth } from '../services/auth';
 
 @Component({
   selector: 'app-updatecontacts',
@@ -23,6 +24,7 @@ export class Updatecontacts implements OnInit {
 
   success = '';
   error = '';
+  userName = '';
   maxDate: string = '';
   selectedFile: File | null = null;
   previewUrl: string | null = null;
@@ -31,6 +33,7 @@ export class Updatecontacts implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private contactService: ContactService,
+    public authService: Auth,
     private router: Router,
     private http: HttpClient,
     private cdr: ChangeDetectorRef
@@ -52,6 +55,7 @@ export class Updatecontacts implements OnInit {
       },
       error: () => this.error = 'Error loading contact.'
     });
+    this.userName = localStorage.getItem('username') || 'Guest';
   }
 
   onFileSelected(event: Event): void {
@@ -71,18 +75,18 @@ export class Updatecontacts implements OnInit {
 
   updateContact(form: NgForm) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.contact.emailAddress??'')) {
-      this.error = 'Please enter a valid email address.';
-      this.cdr.detectChanges();
-      return;
-    }
+      if (!emailRegex.test(this.contact.emailAddress??'')) {
+        this.error = 'Please enter a valid email address.';
+        this.cdr.detectChanges();
+        return;
+      }
 
     const phoneRegex = /^(\(\d{3}\)\s|\d{3}-)\d{3}-\d{4}$/;
-    if (!phoneRegex.test(this.contact.phone??'')) {
-      this.error = 'Please enter a valid phone number.';
-      this.cdr.detectChanges();
-      return;
-    }
+      if (!phoneRegex.test(this.contact.phone??'')) {
+        this.error = 'Please enter a valid phone number.';
+        this.cdr.detectChanges();
+        return;
+      }
 
     if (form.invalid) return;
 
