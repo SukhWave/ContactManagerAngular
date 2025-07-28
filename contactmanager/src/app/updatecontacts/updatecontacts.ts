@@ -29,6 +29,7 @@ export class Updatecontacts implements OnInit {
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   originalImageName: string = '';
+  types: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -56,7 +57,14 @@ export class Updatecontacts implements OnInit {
       error: () => this.error = 'Error loading contact.'
     });
     this.userName = localStorage.getItem('username') || 'Guest';
-  }
+
+        // ✅ Load types
+    this.http.get<any[]>('http://localhost/contactmanagerangular/contactapi/types.php')
+      .subscribe({
+        next: (data) => this.types = data,
+        error: () => console.error('Failed to load contact types')
+      });
+    }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
