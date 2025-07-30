@@ -13,7 +13,7 @@ $password = $request->password ?? '';
 
 if (empty($userName) || empty($password)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Username and password are required.']);
+    echo json_encode(['error' => 'userName and password are required.']);
     exit;
 }
 
@@ -26,13 +26,15 @@ if ($result && mysqli_num_rows($result) === 1) {
 
     $failedAttempts = (int)$user['failed_attempts'];
     $lastFailed = $user['last_failed_login'] ? strtotime($user['last_failed_login']) : 0;
-    $lockoutDuration = 300; // 5 minutes in seconds
+    $lockoutDuration = 300; // 5 minutes in seconds    
 
     // ⏳ Check if account is locked
     if ($failedAttempts >= 3 && (time() - $lastFailed) < $lockoutDuration) {
         $remaining = ceil(($lockoutDuration - (time() - $lastFailed)) / 60);
         http_response_code(403);
-        echo json_encode(['error' => "Account locked. Try again in $remaining minute(s)."]);
+        echo json_encode([
+            'error' => "Account locked. Try again in $remaining minute(s)."
+        ]);
         exit;
     }
 
@@ -49,8 +51,14 @@ if ($result && mysqli_num_rows($result) === 1) {
         $update = "UPDATE registrations SET failed_attempts = $failedAttempts, last_failed_login = NOW() WHERE registrationID = {$user['registrationID']}";
         mysqli_query($con, $update);
 
+        // 🔹 Calculate remaining attempts before lockout
+        $remainingAttempts = max(0, 3 - $failedAttempts);
+
         http_response_code(401);
-        echo json_encode(['error' => 'Invalid username or password.']);
+        echo json_encode([
+            'error' => 'Invalid userName or password.',
+            'remainingAttempts' => $remainingAttempts
+        ]);
     }
 } else {
     http_response_code(404);
